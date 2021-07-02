@@ -46,7 +46,6 @@ npm install eudgc --save
 ```javascript
 // ES6 import (preferred)
 
-
 import { EuDdc, EuDgcCert, EuDgcVaccination} from 'eudgc'
     let qrCode = "HC1....";
     try {
@@ -83,6 +82,16 @@ Eudgc defines a method on the window object that takes a single argument. Of cou
 of a browser you should just use the ES6 imports. Typescript is recommend, but plain javascript will
 work just the same.
 
+```javascript
+// Using the global function on window in browser
+EuDgc_parse(qrCode);
+```
+
+```javascript
+// When using typescript and/or ES6 modules
+EuDgc.parse(qrCode);
+```
+
 ### Arguments
 
 The single argument is the qrcode contents in form of a string.
@@ -90,8 +99,8 @@ The single argument is the qrcode contents in form of a string.
 ### Return value
 If a QR is able to be decoded the library will return an object of the following structure:
 
-```
-*
+```javascript
+/*
  * eudgc record
  *
  * contains an array of vaccinations
