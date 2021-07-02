@@ -2,8 +2,15 @@
 
 A pure javascript (or typescript) library for parsing and validating the European Digital Green Certificate (EuDGC) better known as the "Digitaler Impfpass" in germany or "Digital COVID Certificate or even "Covid Vaccination Pass/QRCode" in other places.
 
+```
+Licensed to the Apache Software Foundation (ASF) under one or more contributor
+license agreements; and to You under the Apache License, Version 2.0. "
+```
+
 The certificate is typically provided in form of a QR-Code. This library deals with the contents
 of this QR-Code. The QR-Code recognition must be done using some other tools or libraries.
+
+
 
 ## Example Application
 
