@@ -8,7 +8,7 @@ of this QR-Code. The QR-Code recognition must be done using some other tools or 
 
 [Simple minimalistic Demo](https://scopevisio.github.io/eudgc/index.html)
 
-![Demo Application (in German)](https://scopevisio.github.io/eudgc/cast_eudgc.gif)
+[Demo Application (in German)](https://scopevisio.github.io/eudgc/cast_eudgc.gif)
 
 ## Explanation and motivation
 
