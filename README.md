@@ -5,10 +5,18 @@ A pure javascript (or typescript) library for parsing and validating the Europea
 The certificate is typically provided in form of a QR-Code. This library deals with the contents
 of this QR-Code. The QR-Code recognition must be done using some other tools or libraries.
 
+## Example Application
+
+Browser this application for reference and as an example. This sample is intended to be a full 
+minimalistic example and is found in the index.html in the docs/ folder.
 
 [Simple minimalistic Demo](https://scopevisio.github.io/eudgc/index.html)
 
-![Demo Application (in German)](https://scopevisio.github.io/eudgc/cast_eudgc.gif)
+## Example Videos
+
+![Simple minimalistic Demo Video](https://scopevisio.github.io/eudgc/cast_eudgc_simple.gif)
+
+[Demo Application (in German)](https://scopevisio.github.io/eudgc/cast_eudgc.gif)
 
 ## Explanation and motivation
 
