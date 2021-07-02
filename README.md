@@ -6,7 +6,9 @@ The certificate is typically provided in form of a QR-Code. This library deals w
 of this QR-Code. The QR-Code recognition must be done using some other tools or libraries.
 
 
-[Demo](https://scopevisio.github.io/eudgc/index.html)
+[Simple minimalistic Demo](https://scopevisio.github.io/eudgc/index.html)
+
+![Demo Application (in German)](https://scopevisio.github.io/eudgc/cast_eudgc.gif)
 
 ## Explanation and motivation
 
