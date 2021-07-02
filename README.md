@@ -7,7 +7,7 @@ of this QR-Code. The QR-Code recognition must be done using some other tools or 
 
 ## Example Application
 
-Browser this application for reference and as an example. This sample is intended to be a full 
+Use this application for reference and as an example. This sample is intended to be a full 
 minimalistic example and is found in the index.html in the docs/ folder.
 
 [Simple minimalistic Demo](https://scopevisio.github.io/eudgc/index.html)
