@@ -1,6 +1,6 @@
 # eudgc
 
-A pure javascript (or typescript) library for parsing and validating the European Digital Green Certificate (EuDGC) better known as the "Digitaler Impfpass" in germany or "Covid Vaccination Pass/QRCode" in other places.
+A pure javascript (or typescript) library for parsing and validating the European Digital Green Certificate (EuDGC) better known as the "Digitaler Impfpass" in germany or "Digital COVID Certificate or even "Covid Vaccination Pass/QRCode" in other places.
 
 The certificate is typically provided in form of a QR-Code. This library deals with the contents
 of this QR-Code. The QR-Code recognition must be done using some other tools or libraries.
@@ -28,19 +28,18 @@ that are provided by the following url:
 
 [Trustlist](https://de.dscg.ubirch.com/trustList/DSC/)
 
-The certificate that signed the TLS certificate of this site was issued by D-Trust GmbH (which is a subsidary of
+The certificate that signed the TLS certificate of this site was issued by D-Trust GmbH. D-Trust is a subsidary of
 the Bundesdruckerei Gruppe (German government agency for printing).
 
-Basically a certificate is thus valid when it was signed by one of the certificates in this trustlist. The X509 
-cerficates can be obtained by saving the contents of the "rawData" property and decoding the base64 to binary.
-Then the certicates can be viewed using
+Basically a EuDGC-COVID certificate is thus valid when it was digitally signed by one of the certificates in the trustlist. The X509  cerficates can be obtained by saving the contents of the "rawData" property and decoding the base64 to binary.
+After that a certicate can be viewed using
 
 ```
 openssl -inform der -text < your_binary_data.bin
 ```
 
 The publickeys are part of the X509 certificates of course. Using openssl or other cryptolibraries
-you can also convert those certificates to the more common PEM format.
+you can also convert those certificates into the more common PEM format.
 
 ## Installation
 
