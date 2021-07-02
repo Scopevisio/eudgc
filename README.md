@@ -188,3 +188,11 @@ This project is sponsored by Scopevisio AG / Bonn.
 
 
 /Stepan
+
+<!--  
+
+anigifs created like this:
+
+fmpeg -i docs/cast_eudgc_simple.mkv -vf "fps=20,scale=352:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 docs/cast_eudgc_simple.gif 
+
+-->
