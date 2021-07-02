@@ -102,4 +102,7 @@ export class EuDgc {
     }
 }
 
-(window as any).EuDgc_parse = EuDgc.parse
+// define a "global" method
+if (window) {
+    (window as any).EuDgc_parse = EuDgc.parse
+}
