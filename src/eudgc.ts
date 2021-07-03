@@ -111,4 +111,4 @@ if (typeof window !== "undefined") {
     (window as any).EuDgc_parse = EuDgc.parse
 }
 
-console.log("exported: " + EuDgc.parse)
+//console.log("exported: " + EuDgc.parse)
