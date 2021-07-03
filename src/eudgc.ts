@@ -2,8 +2,6 @@
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor
  * license agreements; and to You under the Apache License, Version 2.0. "
  */
- * (c) by Scopevisio AG 2021
- */
 
 /* 
  * parse the contents of a cbor/cwt/zlib/base45 dgc
@@ -105,7 +103,12 @@ export class EuDgc {
     }
 }
 
-// define a "global" method
-if (window) {
+
+export const EuDgc_parse = EuDgc.parse;
+// define a "global" method in the browsers window object iff running
+// in a browser environment
+if (typeof window !== "undefined") {
     (window as any).EuDgc_parse = EuDgc.parse
 }
+
+console.log("exported: " + EuDgc.parse)
