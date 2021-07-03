@@ -63,13 +63,13 @@ npm install eudgc --save
 // ES6 import (preferred)
 
 import { EuDdc, EuDgcCert, EuDgcVaccination} from 'eudgc'
-    let qrCode = "HC1....";
-    try {
-        let certificate = EuDgc_parse(qrCode);
-        // .... 
-    } catch (error) {
-        console.log("not a eudgc qrcode: " + error)
-    }
+let qrCode = "HC1....";
+try {
+    let certificate = EuDgc_parse(qrCode);
+    // .... 
+} catch (error) {
+    console.log("not a eudgc qrcode: " + error)
+}
 ```
 
 ### Browser
