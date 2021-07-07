@@ -174,7 +174,7 @@ vaccination is at least 10 days old.
 The single argument is the qrcode contents in form of a string. The string can be prefixed with HC1 
 optionally. Then this prefix is handling correctly but it is not necessary to provide.
 
-### Return value for parsing
+### Return value for validation
 The validation of a QR-Code will return null in case of failure or an object of the following structure
 in the case of success:
 
