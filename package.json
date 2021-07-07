@@ -26,8 +26,8 @@
     "base45": "^3.0.0",
     "bignumber.js": "^9.0.1",
     "browserify-zlib": "^0.2.0",
-    "buffer": "^6.0.3",
     "cbor-web": "^7.0.5",
+    "crypto-browserify": "^3.12.0",
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
     "util": "^0.12.4"
@@ -35,6 +35,7 @@
   "devDependencies": {
     "@types/bignumber.js": "^5.0.0",
     "@types/webpack-env": "^1.16.1",
+    "buffer": "^6.0.3",
     "install": "^0.13.0",
     "ts-loader": "^9.2.3",
     "typescript": "^4.3.5",

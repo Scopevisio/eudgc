@@ -2,6 +2,7 @@
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor
  * license agreements; and to You under the Apache License, Version 2.0. "
  */
+/* Written by Scopevisio AG 2021 */
 
 /* 
  * parse the contents of a cbor/cwt/zlib/base45 dgc
@@ -13,6 +14,10 @@
 import * as cbor from 'cbor-web'
 import base45 from 'base45'
 import zlib from 'zlib'
+import { Trustlist } from './trustlist'
+import { Cose1 } from './cose1'
+import { Buffer } from 'buffer'
+import crypto from 'crypto-browserify'
 
 
 const ClaimKeyHcert = -260
@@ -101,14 +106,41 @@ export class EuDgc {
             });  
         })
     }
+
+    static async validate(encodedData: string) {
+        const cose1 = await Cose1.valueOf(encodedData)
+        if (!cose1) {
+            return null
+        }
+        const raw = cose1.makeDataForVerification()
+        const signature = Buffer.from(cose1.encodeSignature(cose1.signatures)).toString("hex")
+        const certInfos = await Trustlist.instance.getCertInfos()
+        for (let i = 0, n = certInfos.length; i < n; i++) {
+            const certInfo = certInfos[i]
+            const verify = crypto.createVerify("sha256")
+            verify.update(raw)
+            const verification = verify.verify(certInfo.pubkey, signature, "hex")
+            if (verification) {
+                // check for date (validity dates of x509 certificate)
+                const now = new Date().getTime()
+                const timeValid = now >= certInfo.notbefore && now <= certInfo.notafter
+                if (timeValid) {
+                    return certInfo
+                }
+            }
+        }
+        return null
+    }
 }
 
 
 export const EuDgc_parse = EuDgc.parse;
+export const EuDgc_validate = EuDgc.validate;
 // define a "global" method in the browsers window object iff running
 // in a browser environment
 if (typeof window !== "undefined") {
-    (window as any).EuDgc_parse = EuDgc.parse
+    (window as any).EuDgc_parse = EuDgc.parse;
+    (window as any).EuDgc_validate = EuDgc.validate;
 }
 
-//console.log("exported: " + EuDgc.parse)
+console.log("eudgc.ts")

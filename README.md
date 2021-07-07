@@ -19,12 +19,17 @@ minimalistic example and is found in the index.html in the docs/ folder.
 
 [Simple minimalistic Demo](https://scopevisio.github.io/eudgc/index.html)
 
-## Example Videos
+## Example Videos Parsing
 
-![Simple minimalistic Demo Video](https://scopevisio.github.io/eudgc/cast_eudgc_simple.gif)
+![Simple minimalistic Demo Video 1](https://scopevisio.github.io/eudgc/cast_eudgc_simple.gif)
 
 [Demo Application (in German)](https://scopevisio.github.io/eudgc/cast_eudgc.gif)
 
+## Example Videos Parsing and Validation
+
+![Simple minimalistic Demo Video 2](https://scopevisio.github.io/eudgc/cast_validation.gif)
+
+[Demo Application (in German)](https://scopevisio.github.io/eudgc/cast_eudgc.gif)
 ## Explanation and motivation
 
 The EuDGC Certificate is a Base45 encoded, Zlib-compressed, Cbor structure. The Cbor structure itself
@@ -92,28 +97,33 @@ Alternatively you can include the .js bundle in your browser via a good old scri
 ```
 
 
-## Usage
+## Usage Parsing and Validation
 
-Eudgc defines a method on the window object that takes a single argument. Of course when running outside
-of a browser you should just use the ES6 imports. Typescript is recommend, but plain javascript will
-work just the same.
+Eudgc defines a parsing and a validation method on the window object that takes a single argument. 
+Of course when running outside of a browser you should just use the ES6 imports. 
+Typescript is recommend, but plain javascript will
+work just the same. 
 
 ```javascript
 // Using the global function on window in browser
 EuDgc_parse(qrCode);
+EuDgc_validate_(qrCode);
+
 ```
 
 ```javascript
 // When using typescript and/or ES6 modules
 EuDgc.parse(qrCode);
+EuDgc.validate(qrCode);
 ```
 
-### Arguments
+### Argument for parsing
 
-The single argument is the qrcode contents in form of a string.
+The single argument is the qrcode contents in form of a string. The string can be prefixed with HC1 
+optionally. Then this prefix is handling correctly but it is not necessary to provide.
 
-### Return value
-If a QR is able to be decoded the library will return an object of the following structure:
+### Return value for parsing
+If a QR-Code was successfully decoded the library will return an object of the following structure:
 
 ```javascript
 /*
@@ -158,6 +168,60 @@ export interface EuDgcVaccincation {
 
 Note that a person is fully vaccinated when dn == sd and in most interpretation if the date of 
 vaccination is at least 10 days old.
+
+### Argument for validation
+
+The single argument is the qrcode contents in form of a string. The string can be prefixed with HC1 
+optionally. Then this prefix is handling correctly but it is not necessary to provide.
+
+### Return value for parsing
+The validation of a QR-Code will return null in case of failure or an object of the following structure
+in the case of success:
+
+```javascript
+/* Certificate information. This informatino identifies the certificate
+ * that has validated the given QR-Code. The certificate is a X509 
+ * standard certificate, however this datastructure provides convenient fields.
+ */
+export interface CertInfo {
+    subject: string;       // subject of the certificate
+    issuer: string;        // string that describes the issuer of the certificte
+    notbefore: number;     // date before which the certificate should be considered invalid given as a timestamp
+    notafter: number;      // date after which the certificate should be considered invalid given as a timestamp
+    pubkey: string;        // the publickey of the certificate in a way that the browser-crypto api can process it
+    rawX509data: string;   // the X509 certificate in binary DER format, encoded as base64
+    // the rawX509 string contains all the other fields, but needs to be decoded to access that information
+    // one way to do that is using  openssl -inform DER -text 
+}
+```
+
+Note that the certinfos are provided as part of this package statically. You probably should check for their validity yourself
+by loading the data from
+
+```
+https://de.dscg.ubirch.com/trustList/DSC/
+```
+
+and converting it appropriately. However the crypto.createVerify() method only accepts certain
+publickey formats and you'd probably need to add some more crypto libraries for javascript if
+you want to do all of that in the browser. In my opinion it is enough to update the trustlist
+on a daily basis by invoking
+
+```
+curl 'http://localhost:9000/getcerts' -H 'Accept: application/json' -H 'Content-Type: application/json;charset=UTF-8' --data-raw '{"includeraw": true}'
+```
+
+and using the obtained data straight instead of the data provided in the file certs.json.
+
+You can convert the timestamps given as numbers into Javascript Date Objects like this
+
+```
+let notBefore = new Date(certinfo.notbefore)
+...
+``` 
+
+
+
 
 ## Contributing
 

@@ -58,11 +58,11 @@ navigator.mediaDevices.getUserMedia({
     requestAnimationFrame(frame)
 })
 
+let payload = ""  // the qrcode will end up here
 
 const frame = async () => {
     requestAnimationFrame(frame)
 
-    let payload = ""  // the qrcode will end here
     if (video.readyState != video.HAVE_ENOUGH_DATA) {
         return
     }
@@ -73,14 +73,26 @@ const frame = async () => {
     const x = .5 * (canvas.width - size)
     const y = .5 * (canvas.height - size)
     const imageData = ctx.getImageData(x, y, size, size)
-    const code = jsQR(
+    let code = jsQR(
         imageData.data,
         imageData.width,
         imageData.height, {
             inversionAttempts: "dontInvert",
     })
+    
+    const DEBUG_MANUALLY = false
+    if (DEBUG_MANUALLY && !code) {
+        code = {
+            // the italian test-certficate in textual form
+            data: "HC1:6BFOXN%TS3DHPVO13J /G-/2YRVA.Q/R82JD2FCJG96V75DOW%IY17EIHY P8L6IWM$S4U45P84HW6U/4:84LC6 YM::QQHIZC4.OI1RM8ZA.A5:S9MKN4NN3F85QNCY0O%0VZ001HOC9JU0D0HT0HB2PL/IB*09B9LW4T*8+DCMH0LDK2%KI*V AQ2%KYZPQV6YP8722XOE7:8IPC2L4U/6H1D31BLOETI0K/4VMA/.6LOE:/8IL882B+SGK*R3T3+7A.N88J4R$F/MAITHW$P7S3-G9++9-G9+E93ZM$96TV6QRR 1JI7JSTNCA7G6MXYQYYQQKRM64YVQB95326FW4AJOMKMV35U:7-Z7QT499RLHPQ15O+4/Z6E 6U963X7$8Q$HMCP63HU$*GT*Q3-Q4+O7F6E%CN4D74DWZJ$7K+ CZEDB2M$9C1QD7+2K3475J%6VAYCSP0VSUY8WU9SG43A-RALVMO8+-VD2PRPTB7S015SSFW/BE1S1EV*2Q396Q*4TVNAZHJ7N471FPL-CA+2KG-6YPPB7C%40F18N4"
+        }
+    }
+    
     if (code && code.data && payload != code.data) {
         payload = code.data
+
+        // now the qrcode is inside the payload variable and we can show
+        // the contents of the eudgc certificate and also of the validation
 
         // make a result structure
         let result = {}
@@ -92,7 +104,16 @@ const frame = async () => {
             result.eudgc = certificate
         } catch (error) {
             console.error("no eudgc certificate found: " + error)
-            result.eudgc = "No Valid Certificate"
+            result.eudgc = "No Certificate"
+        }
+
+        // try to validate the EuDGC Vaccination Qr-Code
+        try {
+            const certificate = await EuDgc_validate(payload?.trim())
+            result.validationCertificate = certificate
+        } catch (error) {
+            console.error("no eudgc certificate found: " + error)
+            result.validation = "No Valid Certificate"
         }
 
         // format into a buffer and print out the buffer        
