@@ -208,7 +208,7 @@ you want to do all of that in the browser. In my opinion it is enough to update 
 on a daily basis by invoking
 
 ```
-curl 'http://localhost:9000/getcerts' -H 'Accept: application/json' -H 'Content-Type: application/json;charset=UTF-8' --data-raw '{"includeraw": true}'
+curl https://api.undo-app.de/getcerts -H 'Accept: application/json' -H 'Content-Type: application/json;charset=UTF-8' --data-raw '{"includeraw": true}'
 ```
 
 and using the obtained data straight instead of the data provided in the file certs.json.
