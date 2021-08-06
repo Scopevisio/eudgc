@@ -104,16 +104,23 @@ const frame = async () => {
             result.eudgc = certificate
         } catch (error) {
             console.error("no eudgc certificate found: " + error)
-            result.eudgc = "No Certificate"
+            result.eudgc = "No Vaccination Datastructure"
         }
+
+        // "hacky" filter to only use DE certs 
+        const exampleCertFilter = (certInfo) => { return certInfo.subject && certInfo.subject.match(/O.?=.?Robert Koch-Institut/) }
 
         // try to validate the EuDGC Vaccination Qr-Code
         try {
             const certificate = await EuDgc_validate(payload?.trim())
+            
+            // use this version if you want to filter the allowed signatures somehow
+            // const certificate = await EuDgc_validate(payload?.trim(), exampleCertFilter)
+
             result.validationCertificate = certificate
         } catch (error) {
-            console.error("no eudgc certificate found: " + error)
-            result.validation = "No Valid Certificate"
+            console.error("no eudgc signed certificate found: " + error)
+            result.validation = "Invalid Signature"
         }
 
         // format into a buffer and print out the buffer        

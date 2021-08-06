@@ -11,7 +11,7 @@
  *  https://de.dscg.ubirch.com/trustList/DSC/
  */
 
-import * as data from './certs.json'
+import data from './certs.json'
 
 
 /* Certificate information. This informatino identifies the certificate

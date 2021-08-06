@@ -14,7 +14,7 @@
 import * as cbor from 'cbor-web'
 import base45 from 'base45'
 import zlib from 'zlib'
-import { Trustlist } from './trustlist'
+import { CertInfo, Trustlist } from './trustlist'
 import { Cose1 } from './cose1'
 import { Buffer } from 'buffer'
 import crypto from 'crypto-browserify'
@@ -107,35 +107,74 @@ export class EuDgc {
         })
     }
 
-    static async validate(encodedData: string) {
+    /*
+     * ... perform the validation
+     *
+     * This method will throw an exception if the cert is invalid.
+     * this can be the case if 
+     * 
+     * 1. the cert falsely claims to be signed by one of the signatures in the trustlist 
+     * 2. or if the cert is not signed correctly at all
+     * 3. or if the cert is signed correctly by some unknown signature 
+     * 
+     * all three cases result in an invalid certificate
+     * 
+     * the second optional argument 
+     *  
+     *   certFilter
+     * 
+     * is an optional filter predicate function. It is passed each certInfo and
+     * should return false for certificates that should be skipped during validation.
+     * 
+     * If the certFilter is undefined or null, then all certs will be used for validation.
+     * 
+     * Certificates that cannot be handled by the client-side browser crypto are also skipped
+     * and a warning message is printed on the console.
+     * 
+     */
+    static async validate(encodedData: string, certFilter?: (certInfo: CertInfo) => boolean) {
         const cose1 = await Cose1.valueOf(encodedData)
         if (!cose1) {
             return null
         }
         const raw = cose1.makeDataForVerification()
         const signature = Buffer.from(cose1.encodeSignature(cose1.signatures)).toString("hex")
-        const certInfos = await Trustlist.instance.getCertInfos()
-        for (let i = 0, n = certInfos.length; i < n; i++) {
-            const certInfo = certInfos[i]
-            const verify = crypto.createVerify("sha256")
-            verify.update(raw)
-            const verification = verify.verify(certInfo.pubkey, signature, "hex")
-            if (verification) {
-                // check for date (validity dates of x509 certificate)
-                const now = new Date().getTime()
-                const timeValid = now >= certInfo.notbefore && now <= certInfo.notafter
-                if (timeValid) {
-                    return certInfo
-                }
+        let certInfos = await Trustlist.instance.getCertInfos()
+        // filter certs
+        if (certFilter) {
+            const oldCount = certInfos.length
+            certInfos = certInfos.filter(certFilter)
+            if (certInfos.length != oldCount) {
+                console.info("#" + (oldCount - certInfos.length) + " of " + oldCount + " certifcates removed by filter")
             }
         }
-        return null
+        for (let i = 0, n = certInfos.length; i < n; i++) {
+            const certInfo = certInfos[i]
+            // if we run into an exception on one certinfo, continue with the others
+            try {
+                const verify = crypto.createVerify("sha256")
+                verify.update(raw)
+                const verification = verify.verify(certInfo.pubkey, signature, "hex")
+                if (verification) {
+                    // check for date (validity dates of x509 certificate)
+                    const now = new Date().getTime()
+                    const timeValid = now >= certInfo.notbefore && now <= certInfo.notafter
+                    if (timeValid) {
+                        return certInfo
+                    }
+                }
+            } catch (e) {
+                console.warn("unable to handle cert " + (i + 1) + " of " + n + ": " + certInfo.subject + ": " + e)
+            }
+        }
+        throw "Not matching certificate found"
     }
 }
 
 
 export const EuDgc_parse = EuDgc.parse;
 export const EuDgc_validate = EuDgc.validate;
+
 // define a "global" method in the browsers window object iff running
 // in a browser environment
 if (typeof window !== "undefined") {

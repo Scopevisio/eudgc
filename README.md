@@ -109,12 +109,26 @@ work just the same.
 EuDgc_parse(qrCode);
 EuDgc_validate_(qrCode);
 
+
+// if you want to filter the list of certificates you can
+// pass in a predicate function indicating whether the cert
+// is to be used
+// here all certs are considered true.
+EuDgc_validate(qrCode, (certInfo) => { return true; });
+
 ```
 
 ```javascript
 // When using typescript and/or ES6 modules
 EuDgc.parse(qrCode);
 EuDgc.validate(qrCode);
+
+// if you want to filter the list of certificates you can
+// pass in a predicate function indicating whether the cert
+// is to be used
+// here all certs are considered true.
+EuDgc.validate(qrCode, (certInfo) => { return true; });
+
 ```
 
 ### Argument for parsing
