@@ -63,6 +63,35 @@ export interface EuDgcVaccincation {
 }
 
 
+/*
+ * Object that contains the available options to the validate method.
+ *
+ * You can pass in a filter on what certificates to use
+ * or an explicit list of certificates. See below for available options.
+ *
+ */
+export interface ValidationOptions {
+
+    /* certFilter: is an optional filter predicate function. It is passed each 
+     * certInfo and should return false for certificates that should be skipped
+     * during validation. If the certFilter is undefined or null, then all 
+     * certs will be used for validation.
+     */
+    certFilter?: (certInfo: CertInfo) => boolean;
+
+    /* explicitCerts: an optional array of certificates to use for 
+     * validation. this allows to pass in more recent certificates or other
+     * certificates. 
+     * 
+     * Please note that one can obtain wrong and invalid(!)
+     * results by doing so. The responsibility to only indicate really
+     * valid certificates as valid in your product is up to you. 
+     * This is also potentially usefull for debugging.
+     */
+    explicitCerts?: CertInfo[];
+}
+
+
 export class EuDgc {
        
     /**
@@ -113,37 +142,35 @@ export class EuDgc {
      * This method will throw an exception if the cert is invalid.
      * this can be the case if 
      * 
-     * 1. the cert falsely claims to be signed by one of the signatures in the trustlist 
+     * 1. the cert falsely claims to be signed by one of the signatures in the 
+     *    trustlist 
      * 2. or if the cert is not signed correctly at all
      * 3. or if the cert is signed correctly by some unknown signature 
      * 
      * all three cases result in an invalid certificate
      * 
-     * the second optional argument 
+     * the second optional argument controlls several aspects of how the 
+     * validation method should work.
      *  
-     *   certFilter
-     * 
-     * is an optional filter predicate function. It is passed each certInfo and
-     * should return false for certificates that should be skipped during validation.
-     * 
-     * If the certFilter is undefined or null, then all certs will be used for validation.
-     * 
      * Certificates that cannot be handled by the client-side browser crypto are also skipped
-     * and a warning message is printed on the console.
+     * and a warning message is printed on the console. 
      * 
      */
-    static async validate(encodedData: string, certFilter?: (certInfo: CertInfo) => boolean) {
+    static async validate(encodedData: string, options?: ValidationOptions) {
         const cose1 = await Cose1.valueOf(encodedData)
         if (!cose1) {
             return null
         }
         const raw = cose1.makeDataForVerification()
         const signature = Buffer.from(cose1.encodeSignature(cose1.signatures)).toString("hex")
-        let certInfos = await Trustlist.instance.getCertInfos()
+        var certInfos = await Trustlist.instance.getCertInfos()
+        if (options?.explicitCerts) {
+            certInfos = [...options?.explicitCerts]
+        }
         // filter certs
-        if (certFilter) {
+        if (options?.certFilter) {
             const oldCount = certInfos.length
-            certInfos = certInfos.filter(certFilter)
+            certInfos = certInfos.filter(options?.certFilter)
             if (certInfos.length != oldCount) {
                 console.info("#" + (oldCount - certInfos.length) + " of " + oldCount + " certifcates removed by filter")
             }

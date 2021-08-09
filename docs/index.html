@@ -79,8 +79,7 @@ const frame = async () => {
         imageData.height, {
             inversionAttempts: "dontInvert",
     })
-    
-    const DEBUG_MANUALLY = false
+    const DEBUG_MANUALLY = true
     if (DEBUG_MANUALLY && !code) {
         code = {
             // the italian test-certficate in textual form
@@ -110,13 +109,18 @@ const frame = async () => {
         // "hacky" filter to only use DE certs 
         const exampleCertFilter = (certInfo) => { return certInfo.subject && certInfo.subject.match(/O.?=.?Robert Koch-Institut/) }
 
+
         // try to validate the EuDGC Vaccination Qr-Code
         try {
             const certificate = await EuDgc_validate(payload?.trim())
-            
-            // use this version if you want to filter the allowed signatures somehow
-            // const certificate = await EuDgc_validate(payload?.trim(), exampleCertFilter)
 
+            /*
+            const certifcate = await EuDgc_validate(payload?.trim(), {
+                certFilter: (certInfo) => { return true; },
+                explicitCerts: explicitCerts,
+            });
+            */
+ 
             result.validationCertificate = certificate
         } catch (error) {
             console.error("no eudgc signed certificate found: " + error)

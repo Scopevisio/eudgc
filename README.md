@@ -104,6 +104,7 @@ Of course when running outside of a browser you should just use the ES6 imports.
 Typescript is recommend, but plain javascript will
 work just the same. 
 
+
 ```javascript
 // Using the global function on window in browser
 EuDgc_parse(qrCode);
@@ -111,10 +112,12 @@ EuDgc_validate_(qrCode);
 
 
 // if you want to filter the list of certificates you can
-// pass in a predicate function indicating whether the cert
-// is to be used
+// use the options object to pass in a predicate function indicating 
+// whether any given certificate is to be used ...
 // here all certs are considered true.
-EuDgc_validate(qrCode, (certInfo) => { return true; });
+EuDgc_validate(qrCode, {
+    certFilter: (certInfo) => { return true; }
+});
 
 ```
 
@@ -124,11 +127,44 @@ EuDgc.parse(qrCode);
 EuDgc.validate(qrCode);
 
 // if you want to filter the list of certificates you can
-// pass in a predicate function indicating whether the cert
-// is to be used
+// use the options object to pass in a predicate function indicating 
+// whether any given certificate is to be used ...
 // here all certs are considered true.
-EuDgc.validate(qrCode, (certInfo) => { return true; });
+EuDgc.validate(qrCode, {
+    certFilter: (certInfo) => { return true; }
+});
 
+```
+
+The available options for the validate-method are:
+```
+/*
+ * Object that contains the available options to the validate method.
+ *
+ * You can pass in a filter on what certificates to use
+ * or an explicit list of certificates. See below for available options.
+ *
+ */
+export interface ValidationOptions {
+
+    /* certFilter: is an optional filter predicate function. It is passed each 
+     * certInfo and should return false for certificates that should be skipped
+     * during validation. If the certFilter is undefined or null, then all 
+     * certs will be used for validation.
+     */
+    certFilter?: (certInfo: CertInfo) => boolean;
+
+    /* explicitCerts: an optional array of certificates to use for 
+     * validation. this allows to pass in more recent certificates or other
+     * certificates. 
+     * 
+     * Please note that one can obtain wrong and invalid(!)
+     * results by doing so. The responsibility to only indicate really
+     * valid certificates as valid in your product is up to you. 
+     * This is also potentially usefull for debugging.
+     */
+    explicitCerts?: CertInfo[];
+}
 ```
 
 ### Argument for parsing
