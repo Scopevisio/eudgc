@@ -47,7 +47,7 @@ Basically a EuDGC-COVID certificate is thus valid when it was digitally signed b
 After that a certicate can be viewed using
 
 ```
-openssl -inform der -text < your_binary_data.bin
+openssl x509 -inform der -text < your_binary_data.bin
 ```
 
 The publickeys are part of the X509 certificates of course. Using openssl or other cryptolibraries
