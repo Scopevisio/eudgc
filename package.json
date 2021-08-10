@@ -1,6 +1,6 @@
 {
   "name": "eudgc",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "EuDGC (European Digital Green Certificate) handling in Javascript and Typescript",
   "main": "dist/eudgc.js",
   "scripts": {
