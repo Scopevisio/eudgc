@@ -283,6 +283,10 @@ Using the npx command that comes with node.js the typescript and webpack binarie
 project can be used. This is the intended way. The scripts inside package.json use npx to
 perform the various tasks.
 
+```
+// update certs.json with
+npm run fetch
+```
 
 ```
 // for building a production build use

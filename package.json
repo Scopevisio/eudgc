@@ -4,10 +4,11 @@
   "description": "EuDGC (European Digital Green Certificate) handling in Javascript and Typescript",
   "main": "dist/eudgc.js",
   "scripts": {
+    "fetch": "node tool/FetchCerts.js",
     "watch": "npx webpack serve --mode=development",
     "serve": "npx webpack serve --mode=development",
-    "build": "npx webpack --mode=production && cp dist/eudgc.js docs",
-    "prepublishOnly": "npx webpack --mode=production && cp dist/eudgc.js docs",
+    "build": "npx webpack --mode=production && copyfiles dist/eudgc.js docs/ -f",
+    "prepublishOnly": "npx webpack --mode=production && copyfiles dist/eudgc.js docs/ -f",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -23,7 +24,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "assert": "^2.0.0",
-    "base45": "^3.0.0",
+    "base45": "^2.0.1",
     "bignumber.js": "^9.0.1",
     "browserify-zlib": "^0.2.0",
     "cbor-web": "^7.0.5",
@@ -33,9 +34,12 @@
     "util": "^0.12.4"
   },
   "devDependencies": {
+    "@fidm/x509": "^1.2.1",
     "@types/bignumber.js": "^5.0.0",
     "@types/webpack-env": "^1.16.1",
+    "axios": "^0.24.0",
     "buffer": "^6.0.3",
+    "copyfiles": "^2.4.1",
     "install": "^0.13.0",
     "ts-loader": "^9.2.3",
     "typescript": "^4.3.5",
