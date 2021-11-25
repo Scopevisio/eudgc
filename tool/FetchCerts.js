@@ -1,13 +1,13 @@
-import axios from 'axios';
-import { Certificate } from '@fidm/x509';
-import * as fs from "fs";
-import * as path from "path";
+const axios = require('axios');
+const { Certificate } = require('@fidm/x509');
+const fs = require("fs");
+const path = require("path");
 
 /*
  * Fetches the certs from https://de.dscg.ubirch.com/trustList/DSC/
  * and creates the certs.json file in scr folder
  */
-export class FetchCerts {
+class FetchCerts {
 
   constructor() {
     this.fetchAndUpdate();
@@ -57,28 +57,35 @@ export class FetchCerts {
   }
 
   async fetchAndUpdate() {
+    console.log('Start fetching certs')
 
     try {
       const result = await axios.get('https://de.dscg.ubirch.com/trustList/DSC/');
-      const rawData = result.data;
-      const comps = rawData.split('\n');
-      const json = JSON.parse(comps[1]);
 
-      let certs = {
-        certs: []
+      if (result.status === 200) {
+        const rawData = result.data;
+        const comps = rawData.split('\n');
+        const json = JSON.parse(comps[1]);
+
+        let certs = {
+          certs: []
+        }
+
+        for (const cert of json.certificates) {
+          const data = this.decodeX509(cert.rawData, cert.kid);
+
+          certs.certs.push(data);
+        }
+
+        fs.mkdirSync(path.join('./src'), { recursive: true });
+        fs.writeFile(path.join('./src/certs.json'), JSON.stringify(certs,null,0), () => {});
+        console.log('Finished fetching certs')
+      } else {
+        console.error('Failed to fetch with status: \n' + result.status + ': ' + result.statusText)
       }
-
-      for (const cert of json.certificates) {
-        const data = this.decodeX509(cert.rawData, cert.kid);
-
-        certs.certs.push(data);
-      }
-
-      fs.mkdirSync(path.join('./src'), { recursive: true });
-      fs.writeFile(path.join('./src/certs.json'), JSON.stringify(certs,null,0), () => {});
 
     } catch (err) {
-      console.error('failed to submit document: ' + err);
+      console.error('Failed to fetch, with error: ' + err);
     }
   }
 }
