@@ -33,7 +33,7 @@ minimalistic example and is found in the index.html in the docs/ folder.
 ## Explanation and motivation
 
 The EuDGC Certificate is a Base45 encoded, Zlib-compressed, Cbor structure. The Cbor structure itself
-confirms to the COSE Standard, which is an extension of Cbor that provides signatures.
+conforms to the COSE Standard, which is an extension of Cbor that provides signatures.
 
 The EuDGC Certificate is signed using an X509 signature. Apparently only the signatures are considered valid
 that are provided by the following url:
